@@ -641,6 +641,32 @@ if(isset($success))
 			<?php
 			}
 			?>
+			<?php
+			if($alt_currency_enabled)
+			{
+			?>
+				<hr/>
+				<div class="container-fluid">
+					<div class="row">
+						<div class="form-group form-group-sm">
+							<div class="col-xs-6">
+								<label for="sales_invoice_enable" class="control-label checkbox">
+									<?php echo form_checkbox(array('name'=>'apply_exchange_rate', 'id'=>'apply_exchange_rate', 'value'=>1, 'checked'=>$apply_exchange_rate)); ?>
+									<?php echo $this->lang->line('sales_apply_exchange_rate');?>
+								</label>
+							</div>
+							<div class="col-xs-6">
+								<div class="input-group input-group-sm">
+									<span class="input-group-addon input-sm">×</span>
+									<?php echo form_input(array('name'=>'exchange_rate', 'id'=>'exchange_rate', 'class'=>'form-control input-sm', 'value'=>$exchange_rate));?>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			<?php
+			}
+			?>
 		<?php
 		}
 		?>
@@ -771,6 +797,11 @@ $(document).ready(function()
 		$.post("<?php echo site_url($controller_name."/set_comment");?>", {comment: $('#comment').val()});
 	});
 
+    $('#exchange_rate').keyup(function()
+    {
+        $.post("<?php echo site_url($controller_name."/set_exchange_rate");?>", {exchange_rate: $('#exchange_rate').val()});
+    });
+
 	<?php
 	if($this->config->item('invoice_enable') == TRUE)
 	{
@@ -803,7 +834,12 @@ $(document).ready(function()
 		$.post("<?php echo site_url($controller_name."/set_print_after_sale");?>", {sales_print_after_sale: $(this).is(":checked")});
 	});
 
-	$("#price_work_orders").change(function()
+    $("#apply_exchange_rate").change(function()
+    {
+        $.post("<?php echo site_url($controller_name."/set_apply_exchange_rate");?>", {apply_exchange_rate: $(this).is(":checked")});
+    });
+
+    $("#price_work_orders").change(function()
 	{
 		$.post("<?php echo site_url($controller_name."/set_price_work_orders");?>", {price_work_orders: $(this).is(":checked")});
 	});
@@ -909,7 +945,7 @@ $(document).ready(function()
 		var input = $("<input>").attr("type", "hidden").attr("name", "discount_type").val(($(this).prop('checked'))?1:0);
 		$('#cart_'+ $(this).attr('data-line')).append($(input));
 		$('#cart_'+ $(this).attr('data-line')).submit();
-    });
+	});
 });
 
 function check_payment_type()
